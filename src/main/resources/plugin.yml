@@ -1,0 +1,7 @@
+main: io.github.spikey84.spikeymanhunt.spikeymanhunt
+name: SpikeyManhunt
+version: 1
+commands:
+    target:
+      Description: Sets you as the tracker target.
+      usage: /target
