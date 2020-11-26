@@ -1,21 +1,22 @@
 package io.github.spikey84.spikeymanhunt;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerChangedMainHandEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.CompassMeta;
 
+import static io.github.spikey84.spikeymanhunt.cListener.tar;
 
 public class eListener implements Listener {
 
+    Location[] cLocs = new Location[3];
     Location[] locs = new Location[3];
-
 
     public int world(Location IN) {
         if(IN.getWorld().getName().contains("the_end")) {
@@ -26,33 +27,43 @@ public class eListener implements Listener {
             return 0;
         }
     }
+
+    public void checkCompass(ItemStack I, Player P) {
+        if(I == null || I.getType() != Material.COMPASS || !I.getItemMeta().getDisplayName().contains("Tracking: ")) return;
+        CompassMeta cM = (CompassMeta) I.getItemMeta();
+        cM.setLodestoneTracked(false);
+        cM.setLodestone(locs[world(P.getLocation())]);
+        I.setItemMeta(cM);
+    }
+
     @EventHandler
     public void interactEvent(PlayerInteractEvent event) {
         if(event.getItem() == null) return;
         if(event.getItem().getType() != Material.COMPASS) return;
-        Bukkit.getLogger().info("Compass");
 
-        int currentWorld= world(event.getPlayer().getLocation());
-        Location loc = locs[currentWorld];
-        Bukkit.getLogger().info(Integer.toString(currentWorld));
+        for(int i = 0;i<cLocs.length;i++) {
+            locs[i] = cLocs[i];
+        }
+        Location loc = cLocs[world(event.getPlayer().getLocation())];
+        if(loc == null) return;
 
-        event.getPlayer().setCompassTarget(loc);
-        event.getPlayer().sendMessage("Player " + cListener.tar.getName()+" located at "+ Integer.toString(loc.getBlockX())+" "+Integer.toString(loc.getBlockY())+ " "+Integer.toString(loc.getBlockZ())+" in the "+ loc.getWorld().getName());
-        //event.get
+        CompassMeta cM = (CompassMeta) event.getItem().getItemMeta();
+        cM.setLodestoneTracked(false);
+        cM.setLodestone(loc);
+        cM.setDisplayName("Tracking: " + tar.getName());
+        event.getItem().setItemMeta(cM);
 
+        event.getPlayer().sendMessage("Player " + tar.getName()+" located at "+ Integer.toString(loc.getBlockX())+" "+Integer.toString(loc.getBlockY())+ " "+Integer.toString(loc.getBlockZ())+" in the "+ loc.getWorld().getName());
     }
 
     @EventHandler
     public void moveEvent(PlayerMoveEvent event) {
-        if(cListener.tar != event.getPlayer()) return;
-        Player pl = event.getPlayer();
-        locs[world(event.getFrom())] = event.getFrom();
-        Bukkit.getLogger().info(event.getFrom().getWorld().getName());
+        if(tar != event.getPlayer()) return;
+        cLocs[world(event.getFrom())] = event.getFrom();
+    }
 
-
-
-
-
-
+    @EventHandler
+    public void moveWorld(PlayerChangedWorldEvent event) {
+        for(int i = 0; i<event.getPlayer().getInventory().getContents().length;i++) checkCompass(event.getPlayer().getInventory().getContents()[i], event.getPlayer());
     }
 }

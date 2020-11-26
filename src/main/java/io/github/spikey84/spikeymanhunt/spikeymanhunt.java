@@ -9,7 +9,7 @@ public class spikeymanhunt extends JavaPlugin {
     public void onEnable() {
         getServer().getPluginManager().registerEvents(new eListener(),this);
         this.getCommand("target").setExecutor(new cListener());
-        Bukkit.getServer().getLogger().info("REEEEEEEEEEEEEEEe");
+        Bukkit.getServer().getLogger().info("Working!");
     }
 
     @Override
