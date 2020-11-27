@@ -1,5 +1,6 @@
 package io.github.spikey84.spikeymanhunt;
 
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -36,10 +37,25 @@ public class eListener implements Listener {
         I.setItemMeta(cM);
     }
 
+    public void giveCompass(Player P,PlayerInteractEvent E) {
+
+        if(!P.isSneaking() || E.getMaterial() != Material.AIR) return;
+        ItemStack comp = new ItemStack(Material.COMPASS);
+        CompassMeta cM = (CompassMeta) comp.getItemMeta();
+        cM.setLodestoneTracked(false);
+        cM.setLodestone(cLocs[world(P.getPlayer().getLocation())]);
+        if(tar != null) cM.setDisplayName("Tracking: " + tar.getName()); else cM.setDisplayName("Tracking: " + "None");
+        comp.setItemMeta(cM);
+        P.getPlayer().getInventory().setItemInMainHand(comp);
+    }
+
+
     @EventHandler
     public void interactEvent(PlayerInteractEvent event) {
-        if(event.getItem() == null) return;
-        if(event.getItem().getType() != Material.COMPASS) return;
+
+        giveCompass(event.getPlayer(),event);
+
+        if(event.getItem() == null || event.getItem().getType() != Material.COMPASS) return;
 
         for(int i = 0;i<cLocs.length;i++) {
             locs[i] = cLocs[i];
