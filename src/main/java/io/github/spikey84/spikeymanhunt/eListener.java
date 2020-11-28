@@ -9,6 +9,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.CompassMeta;
 
@@ -16,10 +17,10 @@ import static io.github.spikey84.spikeymanhunt.cListener.tar;
 
 public class eListener implements Listener {
 
-    Location[] cLocs = new Location[3];
-    Location[] locs = new Location[3];
+    static Location[] cLocs = new Location[3];
+    static Location[] locs = new Location[3];
 
-    public int world(Location IN) {
+    public static int world(Location IN) {
         if(IN.getWorld().getName().contains("the_end")) {
             return 2;
         } else if(IN.getWorld().getName().contains("nether")){
@@ -37,23 +38,20 @@ public class eListener implements Listener {
         I.setItemMeta(cM);
     }
 
-    public void giveCompass(Player P,PlayerInteractEvent E) {
-
-        if(!P.isSneaking() || E.getMaterial() != Material.AIR) return;
+    public static void giveCompass(Player P) {
         ItemStack comp = new ItemStack(Material.COMPASS);
         CompassMeta cM = (CompassMeta) comp.getItemMeta();
         cM.setLodestoneTracked(false);
         cM.setLodestone(cLocs[world(P.getPlayer().getLocation())]);
         if(tar != null) cM.setDisplayName("Tracking: " + tar.getName()); else cM.setDisplayName("Tracking: " + "None");
         comp.setItemMeta(cM);
-        P.getPlayer().getInventory().setItemInMainHand(comp);
+        P.getInventory().setItem(P.getInventory().firstEmpty(),comp);
     }
-
 
     @EventHandler
     public void interactEvent(PlayerInteractEvent event) {
 
-        giveCompass(event.getPlayer(),event);
+        //giveCompass(event.getPlayer(),event);
 
         if(event.getItem() == null || event.getItem().getType() != Material.COMPASS) return;
 
@@ -69,7 +67,8 @@ public class eListener implements Listener {
         cM.setDisplayName("Tracking: " + tar.getName());
         event.getItem().setItemMeta(cM);
 
-        event.getPlayer().sendMessage("Player " + tar.getName()+" located at "+ Integer.toString(loc.getBlockX())+" "+Integer.toString(loc.getBlockY())+ " "+Integer.toString(loc.getBlockZ())+" in the "+ loc.getWorld().getName());
+        if(!event.getPlayer().isSneaking()) return;
+        event.getPlayer().sendMessage(spikeymanhunt.prefix + tar.getName() + " located at " + Integer.toString(locs[world(tar.getLocation())].getBlockX())+" "+Integer.toString(locs[world(tar.getLocation())].getBlockY())+ " "+Integer.toString(locs[world(tar.getLocation())].getBlockZ())+" in the "+ locs[world(tar.getLocation())].getWorld().getName());
     }
 
     @EventHandler
@@ -81,5 +80,11 @@ public class eListener implements Listener {
     @EventHandler
     public void moveWorld(PlayerChangedWorldEvent event) {
         for(int i = 0; i<event.getPlayer().getInventory().getContents().length;i++) checkCompass(event.getPlayer().getInventory().getContents()[i], event.getPlayer());
+    }
+    
+    @EventHandler
+    public void respawn(PlayerRespawnEvent event) {
+        if(event.getPlayer() == tar) return;
+        giveCompass(event.getPlayer());
     }
 }

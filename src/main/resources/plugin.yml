@@ -4,4 +4,7 @@ version: 1.1
 commands:
     target:
       Description: Sets you as the tracker target.
-      usage: /target
+      usage: /target [Player]
+    compass:
+      Description: Gives another tracking compass.
+      usage: /compass [Player]

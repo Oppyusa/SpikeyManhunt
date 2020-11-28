@@ -1,7 +1,6 @@
 package io.github.spikey84.spikeymanhunt;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -13,9 +12,15 @@ public class cListener implements CommandExecutor {
 
 
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
-        commandSender.sendMessage("worked!");
+
         if(args.length != 1) return false;
+        if(Bukkit.getPlayer(args[0]) == null) {
+            commandSender.sendMessage(spikeymanhunt.prefix+"Invalid Player.");
+            return true;
+        }
         tar = Bukkit.getPlayer(args[0]);
+        commandSender.sendMessage(spikeymanhunt.prefix+tar.getName()+" is now being tracked.");
         return true;
     }
+
 }
