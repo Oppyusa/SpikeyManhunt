@@ -7,7 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class spikeymanhunt extends JavaPlugin {
+public class SpikeyManhunt extends JavaPlugin {
 
     FileConfiguration config = this.getConfig();
     static Color customBlue = Color.fromRGB(0,196,255);
