@@ -1,4 +1,4 @@
-main: io.github.spikey84.spikeymanhunt.spikeymanhunt
+main: io.github.spikey84.spikeymanhunt.SpikeyManhunt
 name: SpikeyManhunt
 version: 1.1
 commands:
