@@ -15,11 +15,11 @@ public class cListener implements CommandExecutor {
 
         if(args.length != 1) return false;
         if(Bukkit.getPlayer(args[0]) == null) {
-            commandSender.sendMessage(spikeymanhunt.prefix+"Invalid Player.");
+            commandSender.sendMessage(SpikeyManhunt.prefix+"Invalid Player.");
             return true;
         }
         tar = Bukkit.getPlayer(args[0]);
-        commandSender.sendMessage(spikeymanhunt.prefix+tar.getName()+" is now being tracked.");
+        commandSender.sendMessage(SpikeyManhunt.prefix+tar.getName()+" is now being tracked.");
         return true;
     }
 
